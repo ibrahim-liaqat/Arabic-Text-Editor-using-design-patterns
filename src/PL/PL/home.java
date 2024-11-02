@@ -24,6 +24,8 @@ public class home {
     private JButton importfile;
     private JButton openbypages;
     private JButton viewall;
+    private JButton Search;
+    private JTextField textarea;
     private filemain o;
     private JFrame frame;
     filemaininterface obj;
@@ -35,6 +37,9 @@ public class home {
         create = new JButton("Create a new file");
         open=new JButton("Open existing File");
         openbypages=new JButton("Open By Pages");
+        Search=new JButton("Search");
+        textarea=new JTextField("                          ");
+
         frame = new JFrame();
         frame.setTitle("Home Page");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -45,6 +50,8 @@ public class home {
         frame.add(viewall);
         frame.add(importfile);
         frame.add(openbypages);
+        frame.add(textarea);
+        frame.add(Search);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         create.addActionListener(new ActionListener() {
@@ -96,6 +103,15 @@ public class home {
 				 String fileName = JOptionPane.showInputDialog(frame, "Enter file name:", "Done", JOptionPane.PLAIN_MESSAGE);
 				new navigatepages(obj,fileName);
 			}
+        });
+        
+        Search.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Your search action code goes here
+            	String word = textarea.getText();
+				new searchResults(obj,word);
+            }
         });
         
     }

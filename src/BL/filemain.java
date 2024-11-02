@@ -130,6 +130,10 @@ public ArrayList<String> navigatepages(String name) {
 	}
 	return result;
 }
-
+public List<Page>searchwords(String name) 
+{List<Page>files =new ArrayList<>();
+	files=o.searchWordfromFiles(name);
+	return files;
+}
 
 }

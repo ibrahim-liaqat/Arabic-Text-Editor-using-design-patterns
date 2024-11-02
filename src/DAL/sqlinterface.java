@@ -13,4 +13,5 @@ public String txttostring(String name);
 public boolean deleteFileFromDb(String fileName);
 boolean saveinpages(String name,String page);
 ArrayList<Page>navigatefromdb(String name);
+List<Page> searchWordfromFiles(String word);
 }

@@ -166,6 +166,29 @@ public class sql implements sqlinterface {
         return pageData;
 		
 	}
+	public List<Page> searchWordfromFiles(String word) {
+	    List<Page> pageData = new ArrayList<>();
+	    String searchQuery = "SELECT * FROM Page WHERE content LIKE ?";
+	    
+	    try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+	         PreparedStatement pstmt = conn.prepareStatement(searchQuery)) {
+	        
+	        pstmt.setString(1, "%" + word + "%");
+	        ResultSet rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            int pageId = rs.getInt("page_id");
+	            String documentId = rs.getString("FileName");
+	            String content = rs.getString("content");
+	            pageData.add(new Page(pageId, documentId, content));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return pageData;
+	}
+
 
 
 }

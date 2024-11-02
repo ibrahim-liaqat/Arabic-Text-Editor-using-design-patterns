@@ -91,12 +91,23 @@ public class open {
                 callingDeleteFunctionFromDeleteClass();
             }
         });
-
+        
+        transliterate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String arabicText = create.getText();
+                String englishText = transliteratingFunction(arabicText);
+                create.setText(englishText);
+            }
+        });
     }
 
     void callingDeleteFunctionFromDeleteClass() {
         new Delete(o, name);
     }
-
+    String transliteratingFunction(String arabicText) {
+        String englishText = o.transliterateArabicToEnglish(arabicText);
+        return englishText;
+    }
    
 }

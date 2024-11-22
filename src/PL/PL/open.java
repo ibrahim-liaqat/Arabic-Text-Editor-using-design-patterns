@@ -17,6 +17,8 @@ public class open {
     private JButton delete;
     private JButton transliterate;
     private JButton segmentation;
+    private JButton Setteming;
+    private JButton lemmetize;
     private filemaininterface o;
     String name;
     open(filemaininterface o, String name) {
@@ -30,6 +32,8 @@ public class open {
         delete = new JButton("Delete");
         transliterate = new JButton("Transliterate");
         segmentation=new JButton("Segmentation");
+        Setteming=new JButton("Stemming");
+        lemmetize=new JButton("Lemmetization");
         openfield = new JTextField();
         create = new JTextArea();
         
@@ -58,6 +62,9 @@ public class open {
         buttonPanel.add(delete);
         buttonPanel.add(transliterate);
         buttonPanel.add(segmentation);
+        buttonPanel.add(lemmetize);
+        buttonPanel.add(Setteming);
+
 
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -101,6 +108,19 @@ public class open {
                 new segment(o,create.getText());
             }
         });
+        Setteming.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new stemnlemit(o,create.getText());
+            }
+        });
+        lemmetize.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new lemit(o,create.getText());
+            }
+        });
+
 
     }
 

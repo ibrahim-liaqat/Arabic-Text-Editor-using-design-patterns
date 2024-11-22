@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import org.tartarus.snowball.ext.arabicStemmer;
+
 import com.qcri.farasa.segmenter.Farasa;
 
 import DAL.sqlinterface;
@@ -196,6 +198,37 @@ public List<String[]> analyzeWordsWithVerb(List<String> words) {
     }
 
     return finalAnalysisData;
+}
+public List<String[]> lemmatizeWords(List<String> words) {
+	  List<String[]> lemmatizedWords = new ArrayList<>();
+    AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
+    for (String word : words) {
+        try {
+            List<Result> results = analyzer.processToken(word).getAllResults();
+            String lemma = results.isEmpty() ? "Invalid word" : results.get(0).getLemma();
+            lemmatizedWords.add(new String[]{word, lemma});
+        } catch (Exception e) {
+            lemmatizedWords.add(new String[]{word, "Error"});
+        }
+    }
+    return lemmatizedWords;
+
+}
+public List<String[]> stemming(List<String> words) {
+  if (words == null || words.isEmpty()) {
+      throw new IllegalArgumentException("The input list of words cannot be null or empty.");
+  }
+  arabicStemmer stemmer = new arabicStemmer();
+  List<String[]> stemmedWords = new ArrayList<>();
+  for (String word : words) {
+      if (word != null && !word.trim().isEmpty()) {
+          stemmer.setCurrent(word); 
+          String stemmedWord = stemmer.stem() ? stemmer.getCurrent() : word; 
+          stemmedWords.add(new String[]{word, stemmedWord}); 
+      }
+  }
+
+  return stemmedWords;
 }
 
 

@@ -17,4 +17,6 @@ ArrayList<String>navigatepages(String name);
 List<Page>searchwords(String name);
 public List<String> segmentContent(String content);
 public List<String[]> analyzeWordsWithVerb(List<String>words);
+public List<String[]> lemmatizeWords(List<String> words);
+public List<String[]> stemming(List<String> words);
 }

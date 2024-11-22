@@ -1,19 +1,38 @@
 package BL;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+
+import com.qcri.farasa.segmenter.Farasa;
+
 import DAL.sqlinterface;
 import DTO.File;
 import DTO.Page;
-import com.ibm.icu.text.Transliterator;
-
+import net.oujda_nlp_team.AlKhalil2Analyzer;
+import net.oujda_nlp_team.entity.Result;
 public class filemain implements  filemaininterface{
 	sqlinterface o ;
+	Farasa farasaSegmenter;
 	public filemain(sqlinterface o){
 		this.o=o;
+		try {
+			farasaSegmenter=new Farasa();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public boolean saveFile(String name,String content) throws SQLException {
 		if (o.savetodb(name,generatehashkey(name)) && saveinpages(name,content) ) 
@@ -138,50 +157,46 @@ public List<Page>searchwords(String name)
 	return files;
 }
 @Override
-public String transliterateArabicToEnglish(String arabicText) {
-    // Define diacritics to remove (extended set)
-    String diacriticsToRemove = "[\u064E\u064F\u0650\u0652\u0651\u064B\u064C\u064D]";
+public List<String> segmentContent(String content) {
+    try {
+        String cleanedContent = content.replaceAll("[^\\p{IsArabic}\\s]", "").trim();
 
-    // Remove diacritics from the input text
-    String cleanedText = arabicText.replaceAll(diacriticsToRemove, "");
+        List<String> segmentedWords = farasaSegmenter.segmentLine(cleanedContent);
 
-    // Define transliteration rules from Arabic to English
-    String rules = "\u0636 > d; "
-                 + "\u0623 > a; "
-                 + "\u0625 > i; "
-                 + "\u0627 > a; "
-                 + "\u0628 > b; "
-                 + "\u062A > t; "
-                 + "\u062B > th; "
-                 + "\u062C > j; "
-                 + "\u062D > h; "
-                 + "\u062E > kh; "
-                 + "\u062F > d; "
-                 + "\u0631 > r; "
-                 + "\u0632 > z; "
-                 + "\u0633 > s; "
-                 + "\u0634 > sh; "
-                 + "\u0635 > s; "
-                 + "\u0637 > t; "
-                 + "\u0638 > dh; "
-                 + "\u0639 > a; "
-                 + "\u063A > gh; "
-                 + "\u0641 > f; "
-                 + "\u0642 > q; "
-                 + "\u0643 > k; "
-                 + "\u0644 > l; "
-                 + "\u0645 > m; "
-                 + "\u0646 > n; "
-                 + "\u0647 > h; "
-                 + "\u0648 > w; "
-                 + "\u064A > y; "
-                 + "\u0629 > h;"; // Taa Marbuta
-
-    // Create a Transliterator instance with the defined rules
-    Transliterator transliterator = Transliterator.createFromRules("ArabicToEnglish", rules, Transliterator.FORWARD);
-    
-    // Apply the transliterator to the cleaned Arabic text
-    return transliterator.transliterate(cleanedText);
+        return segmentedWords.stream()
+                             .filter(word -> word != null && !word.trim().isEmpty())
+                             .collect(Collectors.toList());
+    } catch (Exception e) {
+        throw new RuntimeException("Segmentation error occurred", e);
+    }
 }
+
+@Override
+public List<String[]> analyzeWordsWithVerb(List<String> words) {
+    List<String[]> wordAnalysisData = new ArrayList<>();
+    AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
+
+    for (String word : words) {
+        try {
+            List<Result> analysisResults = analyzer.processToken(word).getAllResults();
+            String partOfSpeechTags = analysisResults.isEmpty() ? "No data" 
+                                        : String.join(", ", analysisResults.get(0).getPartOfSpeech().split("\\|"));
+
+            wordAnalysisData.add(new String[]{word, partOfSpeechTags});
+        } catch (Exception e) {
+            wordAnalysisData.add(new String[]{word, "Error during analysis"});
+        }
+    }
+
+    List<String[]> finalAnalysisData = new ArrayList<>();
+    for (String[] analysis : wordAnalysisData) {
+        String analyzedWord = analysis[0];
+        String analyzedVerb = analysis[1];
+        finalAnalysisData.add(new String[]{analyzedWord, analyzedVerb});
+    }
+
+    return finalAnalysisData;
+}
+
 
 }

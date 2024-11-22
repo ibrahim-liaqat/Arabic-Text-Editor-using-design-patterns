@@ -15,5 +15,6 @@ String generatehashkey(String filename);
 boolean saveinpages(String filename,String content);
 ArrayList<String>navigatepages(String name);
 List<Page>searchwords(String name);
-String transliterateArabicToEnglish(String arabicText);
+public List<String> segmentContent(String content);
+public List<String[]> analyzeWordsWithVerb(List<String>words);
 }

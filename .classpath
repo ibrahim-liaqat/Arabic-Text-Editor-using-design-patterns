@@ -7,8 +7,16 @@
 	</classpathentry>
 	<classpathentry excluding="PL/" kind="src" path="src"/>
 	<classpathentry kind="src" path="src/PL"/>
-	<classpathentry kind="lib" path="C:/Users/Qadri Laptop/Downloads/AlKhalilMorphoSys2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Qadri Laptop/Downloads/FarasaSegmenterJar.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Qadri Laptop/Downloads/AlKhalilMorphoSys2.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Qadri Laptop/Downloads/FarasaSegmenterJar.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Qadri Laptop/Downloads/commonmark-0.17.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Qadri Laptop/Downloads/jsoup-1.18.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Qadri Laptop/Downloads/mysql-connector-j-8.0.31.jar"/>

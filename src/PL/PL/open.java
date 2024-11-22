@@ -16,6 +16,7 @@ public class open {
     private JButton edit;
     private JButton delete;
     private JButton transliterate;
+    private JButton segmentation;
     private filemaininterface o;
     String name;
     open(filemaininterface o, String name) {
@@ -28,6 +29,7 @@ public class open {
         openlabel = new JLabel("File name");
         delete = new JButton("Delete");
         transliterate = new JButton("Transliterate");
+        segmentation=new JButton("Segmentation");
         openfield = new JTextField();
         create = new JTextArea();
         
@@ -55,6 +57,8 @@ public class open {
         buttonPanel.add(home);
         buttonPanel.add(delete);
         buttonPanel.add(transliterate);
+        buttonPanel.add(segmentation);
+
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -89,6 +93,12 @@ public class open {
             @Override
             public void actionPerformed(ActionEvent e) {
                 callingDeleteFunctionFromDeleteClass();
+            }
+        });
+        segmentation.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new segment(o,create.getText());
             }
         });
 

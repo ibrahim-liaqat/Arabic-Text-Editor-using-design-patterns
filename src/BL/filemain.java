@@ -1,17 +1,38 @@
 package BL;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+
+import com.qcri.farasa.segmenter.Farasa;
+
 import DAL.sqlinterface;
 import DTO.File;
 import DTO.Page;
+import net.oujda_nlp_team.AlKhalil2Analyzer;
+import net.oujda_nlp_team.entity.Result;
 public class filemain implements  filemaininterface{
 	sqlinterface o ;
+	Farasa farasaSegmenter;
 	public filemain(sqlinterface o){
 		this.o=o;
+		try {
+			farasaSegmenter=new Farasa();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public boolean saveFile(String name,String content) throws SQLException {
 		if (o.savetodb(name,generatehashkey(name)) && saveinpages(name,content) ) 
@@ -135,5 +156,47 @@ public List<Page>searchwords(String name)
 	files=o.searchWordfromFiles(name);
 	return files;
 }
+@Override
+public List<String> segmentContent(String content) {
+    try {
+        String cleanedContent = content.replaceAll("[^\\p{IsArabic}\\s]", "").trim();
+
+        List<String> segmentedWords = farasaSegmenter.segmentLine(cleanedContent);
+
+        return segmentedWords.stream()
+                             .filter(word -> word != null && !word.trim().isEmpty())
+                             .collect(Collectors.toList());
+    } catch (Exception e) {
+        throw new RuntimeException("Segmentation error occurred", e);
+    }
+}
+
+@Override
+public List<String[]> analyzeWordsWithVerb(List<String> words) {
+    List<String[]> wordAnalysisData = new ArrayList<>();
+    AlKhalil2Analyzer analyzer = AlKhalil2Analyzer.getInstance();
+
+    for (String word : words) {
+        try {
+            List<Result> analysisResults = analyzer.processToken(word).getAllResults();
+            String partOfSpeechTags = analysisResults.isEmpty() ? "No data" 
+                                        : String.join(", ", analysisResults.get(0).getPartOfSpeech().split("\\|"));
+
+            wordAnalysisData.add(new String[]{word, partOfSpeechTags});
+        } catch (Exception e) {
+            wordAnalysisData.add(new String[]{word, "Error during analysis"});
+        }
+    }
+
+    List<String[]> finalAnalysisData = new ArrayList<>();
+    for (String[] analysis : wordAnalysisData) {
+        String analyzedWord = analysis[0];
+        String analyzedVerb = analysis[1];
+        finalAnalysisData.add(new String[]{analyzedWord, analyzedVerb});
+    }
+
+    return finalAnalysisData;
+}
+
 
 }

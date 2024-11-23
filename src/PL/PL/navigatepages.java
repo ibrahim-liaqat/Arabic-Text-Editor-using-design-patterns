@@ -5,6 +5,9 @@ import BL.filemaininterface;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 
 public class navigatepages {
     private ArrayList<JFrame> pages;
@@ -70,6 +73,7 @@ public class navigatepages {
 
             navPanel.add(backButton);
             navPanel.add(forwardButton);
+            navPanel.add(analyzeButton);
             page.add(navPanel, BorderLayout.SOUTH);
 
             pages.add(page);  

@@ -41,6 +41,14 @@ public class navigatepages {
             contentArea.setLineWrap(true);
             contentArea.setWrapStyleWord(true);
             contentArea.setEditable(false);
+            contentArea.addMouseListener(new MouseAdapter() {
+                public void mouseReleased(MouseEvent e) {
+                    String selectedText = contentArea.getSelectedText();
+                    if (selectedText != null && !selectedText.isEmpty()) {
+                        showTFIDFDialog(selectedText);
+                    }
+                }
+            });
             page.add(new JScrollPane(contentArea), BorderLayout.CENTER);
 
             // Navigation panel
@@ -49,6 +57,16 @@ public class navigatepages {
             JButton forwardButton = new JButton(">");
             backButton.addActionListener(this::goBack);
             forwardButton.addActionListener(this::goForward);
+
+            JButton analyzeButton = new JButton("Analyze Selected Word");
+            analyzeButton.addActionListener(e -> {
+                String selectedText = contentArea.getSelectedText();
+                if (selectedText != null && !selectedText.isEmpty()) {
+                    showTFIDFDialog(selectedText);
+                } else {
+                    JOptionPane.showMessageDialog(page, "Please select an Arabic word first.");
+                }
+            });
 
             navPanel.add(backButton);
             navPanel.add(forwardButton);
@@ -80,5 +98,22 @@ public class navigatepages {
         } else {
             JOptionPane.showMessageDialog(null, "Already at the last page!");
         }
+    }
+    private void showTFIDFDialog(String selectedText) {
+        // Call your business layer's functions here using the selected text
+        List<String> documentWords = obj.tokenizeAndPreprocess(selectedText);
+        Map<String, Double> tfScores = obj.calculateTF(documentWords, documentWords);  // Assuming selected words are same as document words
+        Map<String, Double> idfScores = obj.calculateIDF(a, documentWords);
+        List<String[]> tfidfScores = obj.calculateTFIDF(tfScores, idfScores);
+
+        // Display the results in a dialog box
+        StringBuilder result = new StringBuilder("TF-IDF Results for Selected Text:\n");
+        for (String[] score : tfidfScores) {
+            result.append("Word: ").append(score[0])
+                  .append(", TF: ").append(score[1])
+                  .append(", TF-IDF: ").append(score[2])
+                  .append("\n");
+        }
+        JOptionPane.showMessageDialog(null, result.toString());
     }
 }

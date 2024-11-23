@@ -230,6 +230,73 @@ public List<String[]> stemming(List<String> words) {
 
   return stemmedWords;
 }
+public List<String> tokenizeAndPreprocess(String document) {
+    if (document == null || document.isEmpty()) return new ArrayList<>();
+    return Arrays.stream(document.split(" "))
+                 .map(word -> word.replaceAll("[\\u064B-\\u0652]", "").toLowerCase()) 
+                 .filter(word -> !word.isEmpty()) 
+                 .toList();
+}
+public Map<String, Double> calculateTF(List<String> documentWords, List<String> selectedWords) {
+    if (documentWords == null || selectedWords == null) {
+        throw new IllegalArgumentException("Input lists cannot be null.");
+    }
 
+    Map<String, Integer> wordCount = new HashMap<>();
+    int totalWords = documentWords.size();
+
+    if (totalWords == 0) {
+        throw new IllegalArgumentException("The document must contain at least one word.");
+    }
+
+    for (String word : documentWords) {
+        if (selectedWords.contains(word)) { 
+            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+        }
+    }
+
+    Map<String, Double> tf = new HashMap<>();
+    for (String word : selectedWords) {
+        int count = wordCount.getOrDefault(word, 0);
+        tf.put(word, (double) count / totalWords); 
+    }
+
+    return tf;
+}
+public Map<String, Double> calculateIDF(List<String> documents, List<String> selectedWords) {
+    Map<String, Integer> docCount = new HashMap<>();
+    int totalDocs = documents.size();
+
+    for (String doc : documents) {
+        Set<String> uniqueWords = new HashSet<>(Arrays.asList(doc.split(" ")));
+        for (String word : selectedWords) {
+            if (uniqueWords.contains(word)) {
+                docCount.put(word, docCount.getOrDefault(word, 0) + 1);
+            }
+        }
+    }
+    
+    Map<String, Double> idf = new HashMap<>();
+    for (String word : selectedWords) {
+        int count = docCount.getOrDefault(word, 0);
+        double idfValue = (count > 0) ? Math.log((double) totalDocs / count) : 0.0;
+        idf.put(word, idfValue);
+    }
+
+    return idf;
+}
+public List<String[]> calculateTFIDF(Map<String, Double> tfScores, Map<String, Double> idfScores) {
+    List<String[]> tfidfScoresList = new ArrayList<>();
+
+    for (String word : tfScores.keySet()) {
+        double tf = tfScores.getOrDefault(word, 0.0);
+        double idf = idfScores.getOrDefault(word, 0.0);
+        double tfidf = tf * idf;
+
+        tfidfScoresList.add(new String[] { word, String.valueOf(tf), String.valueOf(tfidf) });
+    }
+
+    return tfidfScoresList;  
+}
 
 }

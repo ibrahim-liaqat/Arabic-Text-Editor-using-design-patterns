@@ -6,8 +6,12 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.tartarus.snowball.ext.arabicStemmer;
 
@@ -18,6 +22,7 @@ import DTO.File;
 import DTO.Page;
 import net.oujda_nlp_team.AlKhalil2Analyzer;
 import net.oujda_nlp_team.entity.Result;
+import com.ibm.icu.text.Transliterator;
 public class filemain implements  filemaininterface{
 	sqlinterface o ;
 	Farasa farasaSegmenter;

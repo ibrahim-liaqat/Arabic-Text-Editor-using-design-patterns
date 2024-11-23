@@ -5,6 +5,7 @@ import DTO.Page;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 public interface filemaininterface {
 boolean saveFile(String a,String b) throws SQLException;
   String openfile(String name);
